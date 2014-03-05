@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include "update_and_cal_min.cpp"
+#include "update_and_cal_min.c"
 
 #define MAXDATASIZE 1024
 
@@ -70,7 +70,7 @@ int main(void)
 			exit(1);
 		}
 		if (0 == pid){
-			/* This if the child process */
+			/* This is the child process */
 			close(sockfd);
 			doprocessing(new_fd,
 				     inet_ntoa(client_addr.sin_addr));
@@ -101,10 +101,13 @@ void doprocessing(int sock, char* client_ip ){
 #endif
 
 		char ans[256];
-	        strcpy(ans, update(buf, client_ip));
+		strcpy(ans, update(buf, client_ip));
 #ifdef DEBUGE
 		printf("the answer is %s\n", ans);
 #endif
+		struct sockaddr_in result;
+		result.sin_addr.s_addr = inet_addr(ans);
+		
 	}
 #ifdef DEBUGE
 	if (send(sock, "hi~~", 5, 0) == -1) {

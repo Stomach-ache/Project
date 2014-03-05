@@ -5,10 +5,11 @@
 #include "getMem.h"
 #include "show.c"
 #include "unistd.h"
+#include "send_messg.c"
 
 typedef long long ll;
 #define INTERVAL 3
-//#define DEBUGE 1
+#define DEBUGE 1
 
 int main(){
 
@@ -45,7 +46,10 @@ int main(){
 		pcpu = cpu_num * 100.0 * (processCpuTime2 - processCpuTime1) / (totalCpuTime2 - totalCpuTime1);
 		pmem = 100.0 * processMem / totalMem;
 
-                display(pcpu, pmem);
+#if DEBUG
+		display(pcpu, pmem);
+#endif
+		send_to_server(pcpu, pmem);
 	}
 
 	return 0;

@@ -9,13 +9,16 @@
 
 #define MAXDATASIZE 1024
 
-#define SERVERIP "192.168.1.120"
+#define SERVERIP "127.0.0.1"
 #define SERVERPORT 8000
 
-int main(int argc, char *argv[])
+static int flag = 0, sockfd;
+
+void
+//int 
+connect_to_server() 
 {
-	char buf[MAXDATASIZE];
-	int sockfd, numbytes;
+//	int sockfd;
 	struct sockaddr_in server_addr;
 	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("socket error");
@@ -32,9 +35,23 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	printf("server connected\n");
-	double cpu, mem;
-	cpu = 2.0, mem = 3.4;
+	
+	//return sockfd;
+}
+
+
+void
+send_to_server(double cpu, double mem)
+{
+	//标记是否为第一次连接ｓｅｒｖｅｒ
+	if ( 1 ) {
+		  connect_to_server(); //这里有待改进，应该设计相应算法来实现connect
+		  flag = 1;
+	}
+
 	char msg[100];
+	char buf[MAXDATASIZE];
+	int numbytes;
 	sprintf(msg, "%lf %lf", cpu, mem);
 	if (send(sockfd, msg, 14, 0) == -1) {
 		perror("send error");
@@ -50,5 +67,5 @@ int main(int argc, char *argv[])
 	}
 	close(sockfd);
 
-	return 0;
+	return ;
 }

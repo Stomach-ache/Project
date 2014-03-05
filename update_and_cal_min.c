@@ -64,8 +64,8 @@ int find_ip(char* client_ip){
 
 void add_client(){
 
-	strcpy(ip_table[count++], "192.168.1.120");
-	strcpy(ip_table[count++], "192.168.135.79");
+	strcpy(ip_table[count++], "192.168.135.20");
+	//strcpy(ip_table[count++], "192.168.135.79");
 
 	return ;
 }
