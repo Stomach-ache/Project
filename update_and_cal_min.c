@@ -65,7 +65,7 @@ int find_ip(char* client_ip){
 void add_client(){
 
 	strcpy(ip_table[count++], "192.168.135.20");
-	//strcpy(ip_table[count++], "192.168.135.79");
+	strcpy(ip_table[count++], "192.168.135.51");
 
 	return ;
 }
@@ -77,7 +77,7 @@ int get_min(){
 	for (i = 0; i < count; i++){
 		_free[i] = cpu[i]*rate + mem[i];
 	}
-	for (k = 0; k < 3; k++){
+	for (k = 0; k < 1; k++){
 		double res = inf;
 		int tmp = 0;
 		for(i = 0; i < count; i++){
@@ -93,6 +93,6 @@ int get_min(){
 		top_3[k] = tmp;
 	}
 
-	return top_3[rand()%3];
+	return top_3[rand()%1];
 }
 

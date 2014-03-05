@@ -15,6 +15,7 @@
 #define SERVERPORT 8000
 #define MAXCONN_NUM 10
 #define DEBUGE 1
+#define KEY "request"
 
 
 
@@ -71,10 +72,10 @@ int main(void)
 		}
 		if (0 == pid){
 			/* This is the child process */
-			close(sockfd);
 			doprocessing(new_fd,
 				     inet_ntoa(client_addr.sin_addr));
-			exit(0);
+			close(new_fd);
+			exit(0); 
 		}
 		else{
 			close(new_fd);
@@ -107,7 +108,11 @@ void doprocessing(int sock, char* client_ip ){
 #endif
 		struct sockaddr_in result;
 		result.sin_addr.s_addr = inet_addr(ans);
-		
+		if (0 == strcmp(KEY, buf))
+				if(-1 == send(sock, &result, sizeof(result), 0)) {
+						perror("ERROR sending to socket");
+						exit(1);
+				}
 	}
 #ifdef DEBUGE
 	if (send(sock, "hi~~", 5, 0) == -1) {
