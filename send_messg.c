@@ -9,7 +9,7 @@
 
 #define MAXDATASIZE 1024
 
-#define SERVERIP "127.0.0.1"
+#define SERVERIP "192.168.135.54"
 #define SERVERPORT 8000
 
 static int flag = 0, sockfd;

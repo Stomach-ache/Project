@@ -1,7 +1,8 @@
-#include<stdio.h>
 
-void display(double cpu, double mem){
+void 
+display(int pid, double cpu, double mem)
+{
 	puts("============================");
-	puts("%CPU  %MEM");
-	printf("%.2lf  %.2lf\n",cpu,mem);
+	puts("PID   %CPU   %MEM");
+	printf("%d  %.2lf  %.2lf\n", pid, cpu, mem);
 }

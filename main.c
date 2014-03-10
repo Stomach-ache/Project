@@ -7,49 +7,62 @@
 #include "unistd.h"
 #include "send_messg.c"
 
-typedef long long ll;
 #define INTERVAL 3
 #define DEBUGE 1
 
-int main(){
+int 
+main(int argc, char **argv)
+{
 
 	int cpu_num;
 	cpu_num = get_cpu_num();
-#ifdef DEBUGE
+
 	printf("the number of cpu is: %d\n", cpu_num);
-#endif
 
-	ll totalCpuTime1, totalCpuTime2;
-	ll processCpuTime1, processCpuTime2;
+	LL totalCpuTime1, totalCpuTime2;
+	LL processCpuTime1, processCpuTime2;
+	LL user1, user2, sys1, sys2;
 	int totalMem, processMem;
-	double pcpu, pmem;
+	int memfree, buffers, cached;
+	double pcpu, pmem, total_cpu, total_mem;
 	int pid;
-#ifdef DEBUGE
-	printf("the number of cpu is: ", cpu_num);
-#endif
-	printf("please input pid: ");
-	scanf("%d", &pid);
+	//printf("please input pid: ");
+	//scanf("%d", &pid);
 
-	while (1){
-		processCpuTime1 = get_process_cpu(pid);
-		totalCpuTime1 = get_total_cpu();
 
-		processMem = get_process_mem(pid);
-		totalMem = get_total_mem();
+	while ( 1 ) {
+		if ( 1 != argc ) {
+				sscanf(argv[1], "%d", &pid);
+				processCpuTime1 = get_process_cpu(pid);
+				processMem = get_process_mem(pid);
+		}
+		totalCpuTime1 = get_total_cpu(&user1, &sys1);
+
+		totalMem = get_total_mem(&memfree, &buffers, &cached);
 
 		sleep(INTERVAL);
 
-		processCpuTime2 = get_process_cpu(pid);
-		totalCpuTime2 = get_total_cpu();
+		totalCpuTime2 = get_total_cpu(&user2, &sys2);
 
+		if ( 1 != argc ) {
 
-		pcpu = cpu_num * 100.0 * (processCpuTime2 - processCpuTime1) / (totalCpuTime2 - totalCpuTime1);
-		pmem = 100.0 * processMem / totalMem;
+				processCpuTime2 = get_process_cpu(pid);
+				pcpu = cpu_num * 100.0 * (processCpuTime2 - processCpuTime1) / (totalCpuTime2 - totalCpuTime1);
+				pmem = 100.0 * processMem / totalMem;
+ 				#ifdef DEBUGE
+					display(pid, pcpu, pmem);
+				#endif
+		}
 
-#if DEBUG
-		display(pcpu, pmem);
+		total_cpu = (0.0 + (user2 - user1 + sys2 - sys1)) / (totalCpuTime2 - totalCpuTime1) * 100 * cpu_num;
+		total_mem = (0.0 + totalMem - memfree - buffers - cached) / totalMem * 100;
+#ifdef DEBUGE
+		printf("====================\n");
+		printf("total cpu: %lf%%\n", total_cpu);
+		printf("total mem: %lf%%\n", total_mem);
 #endif
-		send_to_server(pcpu, pmem);
+
+		/* send_to_server(pcpu, pmem); */
 	}
 
 	return 0;

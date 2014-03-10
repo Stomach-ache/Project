@@ -1,9 +1,8 @@
 #include"getCpu.c"
 
-typedef long long ll;
 
-ll get_total_cpu();
+LL get_total_cpu(LL *, LL *);
 
-ll get_process_cpu(int pid);
+LL get_process_cpu(int pid);
 
 int get_cup_num();
