@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "get_cur_time.c"
 
 #define MAXDATASIZE 1024
 
@@ -34,7 +35,7 @@ connect_to_server()
 		perror("connect error");
 		exit(1);
 	}
-	printf("server connected\n");
+//	printf("server connected\n");
 	
 	//return sockfd;
 }
@@ -52,8 +53,8 @@ send_to_server(double cpu, double mem)
 	char msg[100];
 	char buf[MAXDATASIZE];
 	int numbytes;
-	sprintf(msg, "%lf %lf", cpu, mem);
-	if (send(sockfd, msg, 14, 0) == -1) {
+	sprintf(msg, "%lf %lf %ld", cpu, mem, get_cur_time());
+	if (send(sockfd, msg, MAXDATASIZE, 0) == -1) {
 		perror("send error");
 		exit(1);
 	}

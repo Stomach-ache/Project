@@ -7,8 +7,8 @@
 #include "unistd.h"
 #include "send_messg.c"
 
-#define INTERVAL 3
-#define DEBUGE 1
+#define INTERVAL 1
+//#define DEBUGE 1
 
 int 
 main(int argc, char **argv)
@@ -62,7 +62,8 @@ main(int argc, char **argv)
 		printf("total mem: %lf%%\n", total_mem);
 #endif
 
-		/* send_to_server(pcpu, pmem); */
+		send_to_server(total_cpu, total_mem); 
+		sleep(3);
 	}
 
 	return 0;

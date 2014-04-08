@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <pthread.h>
 #include "update_and_cal_min.c"
 
 #define MAXDATASIZE 1024
@@ -17,9 +18,9 @@
 #define DEBUGE 1
 #define KEY "request"
 
-
-
-void doprocessing(int sock, char* client_ip);
+void *doprocessing();
+int sock;
+char *client_ip; 
 
 int main(void)
 {
@@ -64,28 +65,25 @@ int main(void)
 		       client_addr.sin_port);
 #endif
 		/* Create child process */
-		pid_t pid;
-		pid = fork();
-		if (pid < 0){
-			perror("ERROR on fork");
-			exit(1);
+		pthread_t thread_id;
+		sock = new_fd;
+		client_ip = inet_ntoa(client_addr.sin_addr);
+		if (-1 == pthread_create(&thread_id, NULL, doprocessing, NULL)) {
+			perror("cannot create new thread");
+			return 1;
 		}
-		if (0 == pid){
-			/* This is the child process */
-			doprocessing(new_fd,
-				     inet_ntoa(client_addr.sin_addr));
-			close(new_fd);
-			exit(0); 
+		if (0 != pthread_join(thread_id, NULL)) {
+			perror("call pthread_join function fail");
+			return 1;
 		}
-		else{
-			close(new_fd);
-		}
+		close(new_fd);
+
 	}
 
 	return 0;
 }
 
-void doprocessing(int sock, char* client_ip ){
+void *doprocessing(){
 	int numbytes;
 	char buf[MAXDATASIZE];
 
@@ -101,10 +99,14 @@ void doprocessing(int sock, char* client_ip ){
 	        printf("Here is the message: %s\n", buf); 
 #endif
 
+		is_connected();
+
 		char ans[256];
-		strcpy(ans, update(buf, client_ip));
+		update(buf, client_ip, ans);
+
 #ifdef DEBUGE
-		printf("the answer is %s\n", ans);
+		printf("answer is %s\n", ans);
+		puts("=================================");
 #endif
 		struct sockaddr_in result;
 		result.sin_addr.s_addr = inet_addr(ans);
@@ -115,11 +117,13 @@ void doprocessing(int sock, char* client_ip ){
 				}
 	}
 #ifdef DEBUGE
-	if (send(sock, "hi~~", 5, 0) == -1) {
+/*	if (send(sock, "hi~~", 5, 0) == -1) {
 		perror("ERROR sending to socket");
 		exit(1);
 	}
+*/
 #endif
 	
-	return ;
+	return NULL;
 }
+
